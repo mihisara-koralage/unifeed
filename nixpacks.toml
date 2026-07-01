@@ -11,4 +11,4 @@ cmds = [
 ]
 
 [start]
-cmd = "daphne -b 0.0.0.0 -p $PORT config.asgi:application"
+cmd = "python manage.py collectstatic --noinput && daphne -b 0.0.0.0 -p $PORT config.asgi:application"

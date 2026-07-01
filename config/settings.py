@@ -115,14 +115,16 @@ else:
         }
     }
 
-# Channels (for real-time messaging later)
-
-
 
 # Static & media files
 STATIC_URL  = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = os.getenv('STATIC_ROOT', str(BASE_DIR / 'staticfiles'))
+
+_static_dir = BASE_DIR / 'static'
+STATICFILES_DIRS = [_static_dir] if os.path.isdir(_static_dir) else []
+
+WHITENOISE_ROOT = os.getenv('STATIC_ROOT', str(BASE_DIR / 'staticfiles'))
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 

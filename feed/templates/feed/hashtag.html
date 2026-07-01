@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 680px;">
+  <h4 class="mb-4">#{{ hashtag.name }}</h4>
+  {% for post in posts %}
+    {% include 'feed/post_card.html' with post=post %}
+  {% empty %}
+    <p class="text-muted">No posts with this hashtag yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

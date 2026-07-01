@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 640px;">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{% url 'marketplace:browse' %}" class="btn btn-sm btn-outline-secondary">← Back</a>
+    <h4 class="mb-0">Sell an item</h4>
+  </div>
+
+  <div class="card p-4">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        {{ form.title }}
+        {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>{% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        {{ form.description }}
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-6">
+          <label class="form-label">Price (LKR)</label>
+          {{ form.price }}
+        </div>
+        <div class="col-6">
+          <label class="form-label">Condition</label>
+          {{ form.condition }}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Category</label>
+        {{ form.category }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Meet-up location</label>
+        {{ form.location }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Contact information</label>
+        {{ form.contact_info }}
+        <div class="form-text">Buyers will see this on your listing.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Photos <span class="text-muted">(up to 3)</span></label>
+        <div class="d-flex flex-column gap-2">
+          {{ form.image_1 }}
+          {{ form.image_2 }}
+          {{ form.image_3 }}
+        </div>
+        <div class="form-text">First photo will be shown as the thumbnail.</div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Post listing</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

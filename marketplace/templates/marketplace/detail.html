@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 780px;">
+
+  <!-- Safety disclaimer banner -->
+  <div class="alert alert-warning d-flex gap-2 align-items-start mb-4">
+    <span style="font-size:20px;">⚠</span>
+    <div>
+      <strong>Safety reminder:</strong> Always meet in a public, well-lit campus area
+      for item handovers. Never share personal financial information with sellers.
+      UniFeed does not guarantee any transaction.
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Image gallery -->
+    <div class="col-md-6">
+      {% with images=listing.images.all %}
+      {% if images %}
+        <img src="{{ images.0.image.url }}" id="main-img"
+             class="img-fluid rounded mb-2 w-100" style="max-height:320px;object-fit:cover;" alt="main photo">
+        {% if images|length > 1 %}
+        <div class="d-flex gap-2">
+          {% for img in images %}
+          <img src="{{ img.image.url }}"
+               class="rounded border" style="width:72px;height:72px;object-fit:cover;cursor:pointer;"
+               onclick="document.getElementById('main-img').src='{{ img.image.url }}'"
+               alt="photo {{ forloop.counter }}">
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% else %}
+        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+             style="height:280px;color:#aaa;">No photos</div>
+      {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- Details -->
+    <div class="col-md-6">
+      <h4>{{ listing.title }}</h4>
+      <h3 class="text-primary mb-3">LKR {{ listing.price }}</h3>
+
+      <div class="d-flex gap-2 mb-3">
+        <span class="badge bg-secondary">{{ listing.get_category_display }}</span>
+        <span class="badge bg-light text-dark border">{{ listing.get_condition_display }}</span>
+        {% if not listing.is_active %}
+          <span class="badge bg-danger">Sold</span>
+        {% endif %}
+      </div>
+
+      <p>{{ listing.description }}</p>
+
+      <div class="card p-3 mb-3 bg-light border-0">
+        <div class="mb-1">
+          <strong>Meet at:</strong> {{ listing.location }}
+        </div>
+        <div>
+          <strong>Contact:</strong> {{ listing.contact_info }}
+        </div>
+      </div>
+
+      <p class="text-muted small mb-3">
+        Listed by {{ listing.seller.email }} · {{ listing.created_at|timesince }} ago
+      </p>
+
+      <!-- Seller controls -->
+      {% if listing.seller == request.user and listing.is_active %}
+        <a href="{% url 'marketplace:sold' listing.id %}"
+           class="btn btn-outline-success btn-sm mb-3"
+           onclick="return confirm('Mark this item as sold?')">
+          Mark as sold
+        </a>
+      {% endif %}
+
+      <!-- Report button -->
+      {% if listing.seller != request.user %}
+        {% if already_reported %}
+          <p class="text-muted small">You have already reported this listing.</p>
+        {% else %}
+          <a href="{% url 'marketplace:report' listing.id %}"
+             class="btn btn-outline-danger btn-sm">Report listing</a>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="{% url 'marketplace:browse' %}" class="btn btn-outline-secondary btn-sm">← Back to marketplace</a>
+  </div>
+
+</div>
+{% endblock %}

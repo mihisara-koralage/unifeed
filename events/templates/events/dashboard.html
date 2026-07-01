@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 680px;">
+
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{% url 'events:detail' event.id %}" class="btn btn-sm btn-outline-secondary">← Back</a>
+    <h4 class="mb-0">RSVP Dashboard — {{ event.title }}</h4>
+  </div>
+
+  <!-- Summary counts -->
+  <div class="row g-3 mb-4">
+    <div class="col-6">
+      <div class="card p-3 text-center">
+        <div class="fw-bold" style="font-size:2rem;">{{ going|length }}</div>
+        <div class="text-muted">Going</div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="card p-3 text-center">
+        <div class="fw-bold" style="font-size:2rem;">{{ interested|length }}</div>
+        <div class="text-muted">Interested</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Going list -->
+  {% if going %}
+  <h6 class="mb-2">Going ({{ going|length }})</h6>
+  <div class="card mb-4">
+    {% for rsvp in going %}
+    <div class="d-flex align-items-center gap-2 p-2
+                {% if not forloop.last %}border-bottom{% endif %}">
+      <div class="rounded-circle bg-success d-flex align-items-center justify-content-center"
+           style="width:32px;height:32px;color:white;font-size:13px;flex-shrink:0;">
+        {{ rsvp.user.email|first|upper }}
+      </div>
+      <span style="font-size:14px;">{{ rsvp.user.email }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Interested list -->
+  {% if interested %}
+  <h6 class="mb-2">Interested ({{ interested|length }})</h6>
+  <div class="card mb-4">
+    {% for rsvp in interested %}
+    <div class="d-flex align-items-center gap-2 p-2
+                {% if not forloop.last %}border-bottom{% endif %}">
+      <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center"
+           style="width:32px;height:32px;color:white;font-size:13px;flex-shrink:0;">
+        {{ rsvp.user.email|first|upper }}
+      </div>
+      <span style="font-size:14px;">{{ rsvp.user.email }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if not going and not interested %}
+    <p class="text-muted text-center mt-4">No RSVPs yet.</p>
+  {% endif %}
+
+</div>
+{% endblock %}

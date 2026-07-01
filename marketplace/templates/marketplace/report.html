@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 500px;">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{% url 'marketplace:detail' listing.id %}" class="btn btn-sm btn-outline-secondary">← Back</a>
+    <h4 class="mb-0">Report listing</h4>
+  </div>
+
+  <div class="card p-4">
+    <p class="text-muted mb-3">Reporting: <strong>{{ listing.title }}</strong></p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Reason</label>
+        {{ form.reason }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Details <span class="text-muted">(optional)</span></label>
+        {{ form.details }}
+      </div>
+      <button type="submit" class="btn btn-danger w-100">Submit report</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

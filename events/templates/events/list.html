@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Campus Events</h4>
+    {% if request.user.is_page %}
+      <a href="{% url 'events:create' %}" class="btn btn-primary">+ Create event</a>
+    {% endif %}
+  </div>
+
+  <h5 class="mb-3">Upcoming</h5>
+  {% if upcoming %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-5">
+    {% for event in upcoming %}
+    <div class="col">
+      <a href="{% url 'events:detail' event.id %}" class="text-decoration-none">
+        <div class="card h-100">
+          {% if event.banner %}
+            <img src="{{ event.banner.url }}" class="card-img-top"
+                 style="height:160px; object-fit:cover;" alt="banner">
+          {% else %}
+            <div class="bg-secondary" style="height:160px;"></div>
+          {% endif %}
+          <div class="card-body">
+            <h6 class="card-title">{{ event.title }}</h6>
+            <p class="text-muted mb-1" style="font-size:13px;">
+              {{ event.start_date|date:"D, d M Y · H:i" }}
+            </p>
+            <p class="text-muted mb-2" style="font-size:13px;">
+              {{ event.location }}
+            </p>
+            <div class="d-flex gap-3" style="font-size:13px;">
+              <span>✓ {{ event.going_count }} going</span>
+              <span>★ {{ event.interested_count }} interested</span>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="text-muted mb-5">No upcoming events.</p>
+  {% endif %}
+
+  {% if past %}
+  <h5 class="mb-3 text-muted">Past events</h5>
+  <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+    {% for event in past %}
+    <div class="col">
+      <a href="{% url 'events:detail' event.id %}" class="text-decoration-none text-muted">
+        <div class="card h-100" style="opacity:0.7;">
+          <div class="card-body">
+            <h6>{{ event.title }}</h6>
+            <p class="mb-0" style="font-size:13px;">{{ event.start_date|date:"d M Y" }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

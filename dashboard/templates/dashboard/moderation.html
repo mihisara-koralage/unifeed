@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{% url 'dashboard:overview' %}" class="btn btn-sm btn-outline-secondary">← Dashboard</a>
+    <h4 class="mb-0">Moderation queue</h4>
+  </div>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-success alert-dismissible">
+        {{ msg }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Marketplace reports -->
+  <h5 class="mb-3">
+    Marketplace reports
+    {% if open_reports %}
+      <span class="badge bg-danger ms-1">{{ open_reports|length }}</span>
+    {% endif %}
+  </h5>
+  {% if open_reports %}
+  <div class="card mb-4">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>Listing</th><th>Reported by</th><th>Reason</th><th>Date</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for report in open_reports %}
+        <tr>
+          <td>
+            <a href="{% url 'marketplace:detail' report.listing.id %}">
+              {{ report.listing.title|truncatechars:40 }}
+            </a>
+          </td>
+          <td class="text-muted small">{{ report.reporter.email }}</td>
+          <td><span class="badge bg-secondary">{{ report.reason }}</span></td>
+          <td class="text-muted small">{{ report.created_at|timesince }} ago</td>
+          <td>
+            <form method="post"
+                  action="{% url 'dashboard:remove_listing' report.listing.id %}"
+                  onsubmit="return confirm('Remove this listing?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">Remove listing</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="text-muted mb-4">No reports.</p>
+  {% endif %}
+
+  <!-- Recent posts -->
+  <h5 class="mb-3">Recent posts <span class="text-muted fw-normal" style="font-size:14px;">(newest 50)</span></h5>
+  <div class="card mb-4">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>Author</th><th>Content</th><th>Posted</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for post in flagged_posts %}
+        <tr>
+          <td class="text-muted small">{{ post.author.email }}</td>
+          <td>{{ post.content|truncatechars:80 }}</td>
+          <td class="text-muted small">{{ post.created_at|timesince }} ago</td>
+          <td>
+            <form method="post"
+                  action="{% url 'dashboard:delete_post' post.id %}"
+                  onsubmit="return confirm('Delete this post permanently?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Resources -->
+  <h5 class="mb-3">Study resources <span class="text-muted fw-normal" style="font-size:14px;">(newest 30)</span></h5>
+  <div class="card mb-4">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>Title</th><th>Contributor</th><th>Category</th><th>Added</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for resource in flagged_resources %}
+        <tr>
+          <td>
+            <a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer">
+              {{ resource.title|truncatechars:40 }}
+            </a>
+          </td>
+          <td class="text-muted small">{{ resource.contributor.email }}</td>
+          <td><span class="badge bg-secondary">{{ resource.get_category_display }}</span></td>
+          <td class="text-muted small">{{ resource.created_at|timesince }} ago</td>
+          <td>
+            <form method="post"
+                  action="{% url 'dashboard:remove_resource' resource.id %}"
+                  onsubmit="return confirm('Remove this resource?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

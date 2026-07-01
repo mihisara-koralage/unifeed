@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 680px;">
+
+  {% if form %}
+  <div class="card mb-4 p-3">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.content }}
+      <div class="d-flex align-items-center gap-2 mt-2">
+        {{ form.image }}
+        <button type="submit" class="btn btn-primary ms-auto">Post</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {% for post in posts %}
+    {% include 'feed/post_card.html' with post=post %}
+  {% empty %}
+    <p class="text-muted text-center mt-5">No posts yet. Be the first!</p>
+  {% endfor %}
+
+</div>
+{% endblock %}

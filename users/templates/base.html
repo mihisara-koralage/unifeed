@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UniFeed</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand fw-bold" href="/">UniFeed</a>
+    <div class="ms-auto">
+      {% if user.is_authenticated %}
+      <a href="{% url 'users:profile' %}" class="btn btn-outline-light btn-sm me-2">Profile</a>
+      <a href="{% url 'users:logout' %}" class="btn btn-outline-danger btn-sm">Logout</a>
+      <a href="{% url 'messaging:inbox' %}" class="btn btn-outline-light btn-sm me-2">Messages</a>
+      <a href="{% url 'resources:list' %}" class="btn btn-outline-light btn-sm me-2">Resources</a>
+      <a href="{% url 'events:list' %}" class="btn btn-outline-light btn-sm me-2">Events</a>
+      <a href="{% url 'marketplace:browse' %}" class="btn btn-outline-light btn-sm me-2">Marketplace</a>
+      {% if user.is_admin %}
+      <a href="{% url 'dashboard:overview' %}" class="btn btn-warning btn-sm me-2">Dashboard</a>
+      {% endif %}
+      {% else %}
+      <a href="{% url 'users:login' %}" class="btn btn-outline-light btn-sm me-2">Login</a>
+      <a href="{% url 'users:register' %}" class="btn btn-primary btn-sm">Register</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('.like-btn');
+      if (!btn) return;
+
+      const postId = btn.dataset.postId;
+      const csrfToken = document.cookie.match(/csrftoken=([^;]+)/)?.[1];
+
+      fetch(`/like/${postId}/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrfToken }
+      })
+        .then(res => res.json())
+        .then(data => {
+          btn.querySelector('.like-count').textContent = data.like_count;
+          if (data.liked) {
+            btn.classList.replace('btn-outline-primary', 'btn-primary');
+          } else {
+            btn.classList.replace('btn-primary', 'btn-outline-primary');
+          }
+        });
+    });
+  </script>
+</body>
+
+</html>

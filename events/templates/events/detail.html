@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 760px;">
+
+  {% if event.banner %}
+    <img src="{{ event.banner.url }}" class="img-fluid rounded mb-4 w-100"
+         style="max-height:320px; object-fit:cover;" alt="event banner">
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-start mb-2">
+    <h3>{{ event.title }}</h3>
+    {% if request.user == event.organizer or request.user.is_admin %}
+      <a href="{% url 'events:dashboard' event.id %}"
+         class="btn btn-outline-secondary btn-sm">RSVP dashboard</a>
+    {% endif %}
+  </div>
+
+  <p class="text-muted mb-1">
+    {{ event.start_date|date:"l, d F Y · H:i" }} —
+    {{ event.end_date|date:"H:i" }}
+  </p>
+  <p class="text-muted mb-3">{{ event.location }}</p>
+
+  <p class="mb-4">{{ event.description }}</p>
+
+  <!-- RSVP counts -->
+  <div class="d-flex gap-4 mb-4 p-3 bg-light rounded">
+    <div class="text-center">
+      <div class="fw-bold fs-4">{{ event.going_count }}</div>
+      <div class="text-muted small">Going</div>
+    </div>
+    <div class="text-center">
+      <div class="fw-bold fs-4">{{ event.interested_count }}</div>
+      <div class="text-muted small">Interested</div>
+    </div>
+  </div>
+
+  <!-- RSVP buttons (students only) -->
+  {% if request.user.is_student %}
+  <div class="d-flex gap-2 mb-4">
+    <a href="{% url 'events:rsvp' event.id 'going' %}"
+       class="btn {% if user_rsvp.status == 'going' %}btn-success{% else %}btn-outline-success{% endif %}">
+      ✓ Going
+    </a>
+    <a href="{% url 'events:rsvp' event.id 'interested' %}"
+       class="btn {% if user_rsvp.status == 'interested' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+      ★ Interested
+    </a>
+    {% if user_rsvp %}
+      <small class="text-muted align-self-center">
+        You are marked as {{ user_rsvp.status }} — click again to cancel
+      </small>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <p class="text-muted small">
+    Organised by {{ event.organizer.email }} ·
+    Posted {{ event.created_at|timesince }} ago
+  </p>
+
+  <a href="{% url 'events:list' %}" class="btn btn-outline-secondary btn-sm">← All events</a>
+
+</div>
+{% endblock %}

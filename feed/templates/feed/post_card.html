@@ -1,0 +1,59 @@
+<div class="card mb-3" id="post-{{ post.id }}">
+  <div class="card-body">
+
+    <div class="d-flex align-items-center gap-2 mb-2">
+      {% if post.author.avatar %}
+        <img src="{{ post.author.avatar.url }}" class="rounded-circle" width="36" height="36" alt="avatar">
+      {% else %}
+        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+             style="width:36px;height:36px;font-size:14px;color:white;">
+          {{ post.author.email|first|upper }}
+        </div>
+      {% endif %}
+      <div>
+        <strong>{{ post.author.email }}</strong>
+        <small class="text-muted d-block">{{ post.created_at|timesince }} ago</small>
+      </div>
+    </div>
+
+    <p class="card-text">
+      {% for word in post.content.split %}
+        {% if word|slice:":1" == "#" %}
+          <a href="{% url 'feed:hashtag' word|slice:'1:' %}" class="text-primary">{{ word }}</a>
+        {% else %}
+          {{ word }}
+        {% endif %}
+      {% endfor %}
+    </p>
+
+    {% if post.image %}
+      <img src="{{ post.image.url }}" class="img-fluid rounded mb-2" alt="post image">
+    {% endif %}
+
+    <div class="d-flex align-items-center gap-3 mt-2">
+      {% if user.is_student %}
+      <button
+        class="btn btn-sm {% if post.user_has_liked %}btn-primary{% else %}btn-outline-primary{% endif %} like-btn"
+        data-post-id="{{ post.id }}"
+        data-liked="{{ post.user_has_liked|yesno:'true,false' }}">
+        ♥ <span class="like-count">{{ post.like_count }}</span>
+      </button>
+      {% else %}
+        <span class="text-muted small">♥ {{ post.like_count }}</span>
+      {% endif %}
+      {% if user.is_student and post.author != user %}
+        <a href="{% url 'messaging:conversation' post.author.id %}"
+        class="btn btn-sm btn-outline-secondary">Message</a>
+      {% endif %}
+
+      {% if post.hashtags.all %}
+        <div class="ms-auto">
+          {% for tag in post.hashtags.all %}
+            <a href="{% url 'feed:hashtag' tag.name %}" class="badge bg-secondary text-decoration-none me-1">#{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>

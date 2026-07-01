@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 680px;">
+  <h4 class="mb-4">Messages</h4>
+
+  {% for item in conv_data %}
+  <a href="{% url 'messaging:conversation' item.other_user.id %}"
+     class="d-flex align-items-center gap-3 p-3 mb-2 card text-decoration-none">
+
+    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center flex-shrink-0"
+         style="width:44px;height:44px;color:white;font-size:16px;">
+      {{ item.other_user.email|first|upper }}
+    </div>
+
+    <div class="flex-grow-1 overflow-hidden">
+      <div class="d-flex justify-content-between">
+        <strong>{{ item.other_user.email }}</strong>
+        {% if item.last_message %}
+          <small class="text-muted">{{ item.last_message.created_at|timesince }} ago</small>
+        {% endif %}
+      </div>
+      <div class="text-muted text-truncate" style="font-size:14px;">
+        {% if item.last_message %}
+          {{ item.last_message.content|truncatechars:60 }}
+        {% else %}
+          No messages yet
+        {% endif %}
+      </div>
+    </div>
+
+    {% if item.unread_count %}
+      <span class="badge bg-primary rounded-pill">{{ item.unread_count }}</span>
+    {% endif %}
+  </a>
+  {% empty %}
+    <p class="text-muted text-center mt-5">No conversations yet.<br>Start one by visiting someone's profile.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{% url 'dashboard:overview' %}" class="btn btn-sm btn-outline-secondary">← Dashboard</a>
+    <h4 class="mb-0">User management</h4>
+  </div>
+
+  <!-- Filter + search -->
+  <form method="get" class="d-flex gap-2 mb-4 flex-wrap">
+    <select name="role" class="form-select" style="width:auto;"
+            onchange="this.form.submit()">
+      <option value="" {% if not active_role %}selected{% endif %}>All roles</option>
+      <option value="student"  {% if active_role == 'student' %}selected{% endif %}>Students</option>
+      <option value="page"     {% if active_role == 'page' %}selected{% endif %}>Page accounts</option>
+      <option value="admin"    {% if active_role == 'admin' %}selected{% endif %}>Admins</option>
+    </select>
+    <input type="text" name="search" value="{{ search }}"
+           class="form-control" style="max-width:260px;" placeholder="Search by email…">
+    <button type="submit" class="btn btn-outline-primary">Search</button>
+  </form>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags }} alert-dismissible">
+        {{ msg }} <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Verified</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.email }}</td>
+          <td>
+            <span class="badge
+              {% if u.role == 'admin' %}bg-dark
+              {% elif u.role == 'page' %}bg-primary
+              {% else %}bg-secondary{% endif %}">
+              {{ u.role }}
+            </span>
+          </td>
+          <td>
+            {% if u.role == 'page' %}
+              {% if u.is_verified %}
+                <span class="badge bg-success">Verified</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% endif %}
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td class="text-muted small">{{ u.date_joined|date:"d M Y" }}</td>
+          <td>
+            <div class="d-flex gap-2 flex-wrap">
+
+              <!-- Role change form -->
+              {% if u != request.user %}
+              <form method="post" action="{% url 'dashboard:change_role' u.id %}"
+                    class="d-flex gap-1">
+                {% csrf_token %}
+                <select name="role" class="form-select form-select-sm" style="width:110px;">
+                  <option value="student" {% if u.role == 'student' %}selected{% endif %}>Student</option>
+                  <option value="page"    {% if u.role == 'page' %}selected{% endif %}>Page</option>
+                  <option value="admin"   {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-outline-primary">Set</button>
+              </form>
+              {% endif %}
+
+              <!-- Verify / unverify button for Page accounts -->
+              {% if u.role == 'page' and u != request.user %}
+              <form method="post" action="{% url 'dashboard:verify_page' u.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm
+                  {% if u.is_verified %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+                  {% if u.is_verified %}Unverify{% else %}Verify{% endif %}
+                </button>
+              </form>
+              {% endif %}
+
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted py-4">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

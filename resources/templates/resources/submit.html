@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4" style="max-width: 600px;">
+  <div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{% url 'resources:list' %}" class="btn btn-sm btn-outline-secondary">← Back</a>
+    <h4 class="mb-0">Share a study resource</h4>
+  </div>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-danger">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card p-4">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+          <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">URL</label>
+        {{ form.url }}
+        {% if form.url.errors %}
+          <div class="text-danger small mt-1">{{ form.url.errors.0 }}</div>
+        {% endif %}
+        <div class="form-text">Paste a Google Drive, Dropbox, or any direct link.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Category</label>
+        {{ form.category }}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description <span class="text-muted">(optional)</span></label>
+        {{ form.description }}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Submit resource</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

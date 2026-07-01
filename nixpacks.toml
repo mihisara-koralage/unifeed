@@ -5,8 +5,7 @@ nixPkgs = ["python313", "python313Packages.pip"]
 cmds = ["pip install -r requirements.txt"]
 
 [phases.build]
-# Create directories explicitly so Django always finds them
-cmds = ["mkdir -p static staticfiles"]
+cmds = ["mkdir -p static staticfiles", "pip install -r requirements.txt"]
 
 [start]
 cmd = "python manage.py collectstatic --noinput --clear && daphne -b 0.0.0.0 -p $PORT config.asgi:application"

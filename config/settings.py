@@ -27,6 +27,10 @@ CHANNEL_LAYERS = {
     },
 }
 
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/users/login/'
+
 INSTALLED_APPS = [
     # Django built-ins
     'django.contrib.admin',

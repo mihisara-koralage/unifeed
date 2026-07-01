@@ -2,6 +2,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 import os
+import cloudinary
 
 load_dotenv()
 
@@ -32,20 +33,18 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/users/login/'
 
 INSTALLED_APPS = [
-    # Django built-ins
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
-    'cloudinary',
     # Third-party
     'rest_framework',
     'rest_framework_simplejwt',
     'channels',
-    # Your apps (add each one as you build it)
+    'cloudinary',          # just this, no cloudinary_storage
+    # Your apps
     'users',
     'feed',
     'messaging',
@@ -55,23 +54,25 @@ INSTALLED_APPS = [
     'dashboard',
 ]
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY':    os.getenv('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-}
+cloudinary.config(
+    cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key    = os.getenv('CLOUDINARY_API_KEY'),
+    api_secret = os.getenv('CLOUDINARY_API_SECRET'),
+    secure     = True,
+)
 
 STORAGES = {
     'default': {
-        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
     'staticfiles': {
-        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
 }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

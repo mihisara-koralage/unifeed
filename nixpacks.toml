@@ -5,10 +5,7 @@ nixPkgs = ["python313", "python313Packages.pip"]
 cmds = ["pip install -r requirements.txt"]
 
 [phases.build]
-cmds = [
-    "mkdir -p static staticfiles",
-    "python manage.py collectstatic --noinput --clear"
-]
+cmds = ["mkdir -p static staticfiles"]
 
 [start]
-cmd = "python manage.py collectstatic --noinput && daphne -b 0.0.0.0 -p $PORT config.asgi:application"
+cmd = "python manage.py collectstatic --noinput --clear && daphne -b 0.0.0.0 -p $PORT config.asgi:application"

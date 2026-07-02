@@ -12,7 +12,6 @@ urlpatterns = [
     path('events/',      include('events.urls')),
     path('marketplace/', include('marketplace.urls')),
     path('dashboard/',   include('dashboard.urls')),
-    # Serve static files directly — works regardless of DEBUG setting
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     re_path(r'^media/(?P<path>.*)$',  serve, {'document_root': settings.MEDIA_ROOT}),
 ]

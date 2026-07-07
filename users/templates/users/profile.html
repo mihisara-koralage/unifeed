@@ -3,12 +3,12 @@
 <div class="container mt-4" style="max-width: 700px;">
 
   {% if messages %}
-    {% for msg in messages %}
-      <div class="alert alert-success alert-dismissible">
-        {{ msg }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    {% endfor %}
+  {% for msg in messages %}
+  <div class="alert alert-success alert-dismissible">
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
   {% endif %}
 
   <div class="card p-4 mb-4">
@@ -20,22 +20,15 @@
         <!-- Avatar preview -->
         <div class="position-relative" style="flex-shrink:0;">
           {% if user.avatar %}
-            <img src="{{ user.avatar.url }}"
-                 id="avatar-preview"
-                 class="rounded-circle"
-                 style="width:96px;height:96px;object-fit:cover;"
-                 alt="avatar">
+          <img src="{{ user.avatar.url }}" id="avatar-preview" class="rounded-circle"
+            style="width:96px;height:96px;object-fit:cover;" alt="avatar">
           {% else %}
-            <div id="avatar-placeholder"
-                 class="rounded-circle bg-secondary d-flex align-items-center
-                        justify-content-center text-white"
-                 style="width:96px;height:96px;font-size:36px;">
-              {{ user.email|first|upper }}
-            </div>
-            <img id="avatar-preview"
-                 class="rounded-circle d-none"
-                 style="width:96px;height:96px;object-fit:cover;"
-                 alt="avatar preview">
+          <div id="avatar-placeholder" class="rounded-circle bg-secondary d-flex align-items-center
+                        justify-content-center text-white" style="width:96px;height:96px;font-size:36px;">
+            {{ user.email|first|upper }}
+          </div>
+          <img id="avatar-preview" class="rounded-circle d-none" style="width:96px;height:96px;object-fit:cover;"
+            alt="avatar preview">
           {% endif %}
         </div>
 
@@ -58,12 +51,13 @@
         <label class="form-label">Bio</label>
         {{ form.bio }}
         {% if form.bio.errors %}
-          <div class="text-danger small mt-1">{{ form.bio.errors.0 }}</div>
+        <div class="text-danger small mt-1">{{ form.bio.errors.0 }}</div>
         {% endif %}
         <div class="form-text">Max 500 characters.</div>
       </div>
 
       <button type="submit" class="btn btn-primary">Save changes</button>
+      <a href="{% url 'users:password_change' %}" class="btn btn-outline-secondary ms-2">Change password</a>
     </form>
   </div>
 
@@ -74,8 +68,8 @@
   <div class="card mb-2 p-3">
     <p class="mb-1">{{ post.content }}</p>
     {% if post.image %}
-      <img src="{{ post.image.url }}" class="img-fluid rounded mb-1"
-           style="max-height:160px;object-fit:cover;" alt="post image">
+    <img src="{{ post.image.url }}" class="img-fluid rounded mb-1" style="max-height:160px;object-fit:cover;"
+      alt="post image">
     {% endif %}
     <small class="text-muted">{{ post.created_at|timesince }} ago
       · ♥ {{ post.like_count }}</small>
@@ -86,20 +80,20 @@
 </div>
 
 <script>
-document.querySelector('input[name="avatar"]').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+  document.querySelector('input[name="avatar"]').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    const preview = document.getElementById('avatar-preview');
-    const placeholder = document.getElementById('avatar-placeholder');
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      const preview = document.getElementById('avatar-preview');
+      const placeholder = document.getElementById('avatar-placeholder');
 
-    preview.src = ev.target.result;
-    preview.classList.remove('d-none');
-    if (placeholder) placeholder.classList.add('d-none');
-  };
-  reader.readAsDataURL(file);
-});
+      preview.src = ev.target.result;
+      preview.classList.remove('d-none');
+      if (placeholder) placeholder.classList.add('d-none');
+    };
+    reader.readAsDataURL(file);
+  });
 </script>
 {% endblock %}

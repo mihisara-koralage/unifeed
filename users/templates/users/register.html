@@ -1,12 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5" style="max-width: 480px;">
-  <h2>Create your account</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
-  </form>
-  <p class="mt-3 text-center">Already have an account? <a href="{% url 'users:login' %}">Log in</a></p>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>Create account</h2>
+    <p class="auth-subtitle">Join your university community on UniFeed</p>
+
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <div class="invalid-feedback d-block">{{ field.errors.0 }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary w-100 mt-2">Create account</button>
+    </form>
+
+    <p class="text-center text-muted mt-3" style="font-size:13px;">
+      Already have an account? <a href="{% url 'users:login' %}">Log in</a>
+    </p>
+  </div>
 </div>
 {% endblock %}
